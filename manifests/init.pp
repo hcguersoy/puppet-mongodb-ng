@@ -60,17 +60,27 @@ class mongodb (
   $slave           = undef,
   $only            = undef,
   $master          = undef,
-  $source          = undef
+  $source          = undef,
+  $enable_dpkg     = false,
+  $deb_file        = undef,
+  $config_file     = '/etc/mongod.conf',
 ) inherits mongodb::params {
 
-  if $enable_10gen {
-    include $mongodb::params::source
-    Class[$mongodb::params::source] -> Package['mongodb-10gen']
+  if ($enable_10gen or $enable_dpkg) {
+    if $enable_10gen {
+      $deb_source  = 'mongodb::sources::apt'
+      notice ("10gen is true")
+    } elsif $enable_dpkg {
+      $deb_source  = 'mongodb::sources::dpkg'
+      notice ("dpkg is true")
+    }
+    include $deb_source
+    Class[$deb_source] -> Package['mongodb-10gen']
   }
 
   if $packagename {
     $package = $packagename
-  } elsif $enable_10gen {
+  } elsif ($enable_10gen or $enable_dpkg) {
     $package = $mongodb::params::pkg_10gen
   } else {
     $package = $mongodb::params::package
@@ -81,7 +91,7 @@ class mongodb (
     ensure => installed,
   }
 
-  file { '/etc/mongod.conf':
+  file { $config_file :
     content => template('mongodb/mongod.conf.erb'),
     owner   => 'root',
     group   => 'root',
@@ -93,6 +103,6 @@ class mongodb (
     name      => $servicename,
     ensure    => running,
     enable    => true,
-    subscribe => File['/etc/mongod.conf'],
+    subscribe => File[$config_file],
   }
 }

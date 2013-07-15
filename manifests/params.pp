@@ -1,4 +1,7 @@
 class mongodb::params{
+  notice ("Im on ${::osfamily}")
+  notice ("$enable_10gen")
+  notice ("$enable_dpkg")
   case $::osfamily {
     'redhat': {
       $baseurl = "http://downloads-distro.mongodb.org/repo/redhat/os/${::architecture}"
@@ -16,7 +19,6 @@ class mongodb::params{
         'Debian': { $init = 'sysv' }
         'Ubuntu': { $init = 'upstart' }
       }
-      $source  = 'mongodb::sources::apt'
       $package = 'mongodb'
       $service = 'mongodb'
       $pkg_10gen = 'mongodb-10gen'
