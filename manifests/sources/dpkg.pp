@@ -1,7 +1,7 @@
 class mongodb::sources::dpkg inherits mongodb::params {
 
-  if $mongodb::deb_file {
-    $file = $mongodb::deb_file
+  if $mongodb::install::deb_file {
+    $file = $mongodb::install::deb_file
   } else {
     raise Puppet::ParseError, "You must provide a deb file using the deb_file parameter"
   }
