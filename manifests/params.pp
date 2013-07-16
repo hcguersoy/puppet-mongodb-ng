@@ -1,7 +1,4 @@
 class mongodb::params{
-  notice ("Im on ${::osfamily}")
-  notice ("$enable_10gen")
-  notice ("$enable_dpkg")
   case $::osfamily {
     'redhat': {
       $baseurl = "http://downloads-distro.mongodb.org/repo/redhat/os/${::architecture}"
