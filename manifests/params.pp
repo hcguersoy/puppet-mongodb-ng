@@ -7,7 +7,7 @@ class mongodb::params{
       $baseurl = "http://downloads-distro.mongodb.org/repo/redhat/os/${::architecture}"
       $source  = 'mongodb::sources::yum'
       $package = 'mongodb-server'
-      $service = 'mongod'
+      $orig_service = 'mongod'
       $pkg_10gen = 'mongo-10gen-server'
     }
     'debian': {
@@ -20,7 +20,8 @@ class mongodb::params{
         'Ubuntu': { $init = 'upstart' }
       }
       $package = 'mongodb'
-      $service = 'mongodb'
+      # using a different name as the default one
+      $orig_service = 'mongodb'
       $pkg_10gen = 'mongodb-10gen'
     }
     default: {

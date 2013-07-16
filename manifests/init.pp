@@ -34,12 +34,13 @@ class mongodb (
   $init            = $mongodb::params::init,
   $location        = '',
   $packagename     = undef,
-  $servicename     = $mongodb::params::service,
-  $logpath         = '/var/log/mongo/mongod.log',
+  $servicename     = undef,
+  $logpath         = '/var/log/mongodb/',
+  $logfile         = "$servicename.log",
   $logappend       = true,
   $mongofork       = true,
   $port            = '27017',
-  $dbpath          = '/var/lib/mongo',
+  $dbpath          = "/var/lib/mongodb/$servicename",
   $nojournal       = undef,
   $cpu             = undef,
   $noauth          = undef,
@@ -63,7 +64,7 @@ class mongodb (
   $source          = undef,
   $enable_dpkg     = false,
   $deb_file        = undef,
-  $config_file     = '/etc/mongod.conf',
+  $config_file     = "/etc/$servicename-dbconfig.conf",
 ) inherits mongodb::params {
 
   if ($enable_10gen or $enable_dpkg) {
@@ -91,18 +92,58 @@ class mongodb (
     ensure => installed,
   }
 
+  #create directory needed by the db
+  # log path
+  file { $logpath :
+    ensure  => 'directory',
+    owner   => 'mongodb',
+    group   => 'mongodb',
+    mode    => '0644',
+    require => Package['mongodb-10gen'],
+  }  
+
+  # db path
+  file { $dbpath :
+    ensure  => 'directory',
+    owner   => 'mongodb',
+    group   => 'mongodb',
+    mode    => '0644',
+    require => Package['mongodb-10gen'],
+  }  
+
   file { $config_file :
     content => template('mongodb/mongod.conf.erb'),
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    require => Package['mongodb-10gen'],
+    require => [Package['mongodb-10gen'], File[$dbpath], File[$logpath]]
   }
 
-  service { 'mongodb':
+  # the upstart config file
+  # contributions are welcome for RH/CentOs
+  # as this is Ubuntu/Debian specific
+  file { "/etc/init/$servicename.conf" :
+    content => template('mongodb/mongoinit.conf.erb'),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    require => File[$config_file]
+  }
+
+  # disable the original service as
+  # we want to configure different instances
+  # with different names
+  service { $orig_service :
+    name      => $orig_service,
+    ensure    => stopped,
+    enable    => false,
+  }
+
+  service { $servicename :
     name      => $servicename,
     ensure    => running,
     enable    => true,
+    require   => [Service[$orig_service], File["/etc/init/$servicename.conf"]],
     subscribe => File[$config_file],
   }
 }
