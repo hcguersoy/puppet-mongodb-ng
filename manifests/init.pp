@@ -21,12 +21,17 @@
 #     enable_10gen => true,
 #   }
 #
+# === TODOs
+# 
+# - Definitions for Arbiter, Configserver, mongos
+# - Support for Replika-Sets and Sharding
+#
 # === Authors
 #
 # Craig Dunn <craig@craigdunn.org>
 #
-# Forked and modief by
-# Halil-Cem Gürsiy <hcguersoy@gmail.com>
+# Forked and modified by
+# Halil-Cem Gürsoy <hcguersoy@gmail.com>
 #
 # === Copyright
 #
