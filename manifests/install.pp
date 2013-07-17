@@ -2,8 +2,11 @@
 # but doesn't configure any instance.
 # Instead of this, the original service will be
 # disabled.
+# TODO delete original upstart and config file
 
 class mongodb::install (
+    $location        = '',
+    $init            = $mongodb::params::init,
     $enable_10gen    = false,
     $enable_dpkg     = false,
     $deb_file        = undef,
@@ -36,7 +39,7 @@ class mongodb::install (
     ensure => installed,
   }
 
-    # disable the original service as
+  # disable the original service as
   # we want to configure different instances
   # with different names
   service { $orig_service :

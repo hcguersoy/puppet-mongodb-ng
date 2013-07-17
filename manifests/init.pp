@@ -25,17 +25,16 @@
 #
 # Craig Dunn <craig@craigdunn.org>
 #
+# Forked and modief by
+# Halil-Cem Gürsiy <hcguersoy@gmail.com>
+#
 # === Copyright
 #
 # Copyright 2012 PuppetLabs
 #
-class mongodb (
-  $enable_10gen    = false,
-  $init            = $mongodb::params::init,
-  $location        = '',
-  $packagename     = undef,
+define mongodb (
   $servicename     = undef,
-  $logpath         = '/var/log/mongodb/',
+  $logpath         = "/var/log/mongodb/$servicename/",
   $logfile         = "$servicename.log",
   $logappend       = true,
   $mongofork       = true,
@@ -50,7 +49,7 @@ class mongodb (
   $quota           = undef,
   $oplog           = undef,
   $nohints         = undef,
-  $nohttpinterface = undef,
+  $nohttpinterface = true,
   $noscripting     = undef,
   $notablescan     = undef,
   $noprealloc      = undef,
@@ -62,40 +61,16 @@ class mongodb (
   $only            = undef,
   $master          = undef,
   $source          = undef,
-  $enable_dpkg     = false,
-  $deb_file        = undef,
   $config_file     = "/etc/$servicename-dbconfig.conf",
-) inherits mongodb::params {
+) {
 
-  if ($enable_10gen or $enable_dpkg) {
-    if $enable_10gen {
-      $deb_source  = 'mongodb::sources::apt'
-      notice ("10gen is true")
-    } elsif $enable_dpkg {
-      $deb_source  = 'mongodb::sources::dpkg'
-      notice ("dpkg is true")
-    }
-    include $deb_source
-    Class[$deb_source] -> Package['mongodb-10gen']
-  }
 
-  if $packagename {
-    $package = $packagename
-  } elsif ($enable_10gen or $enable_dpkg) {
-    $package = $mongodb::params::pkg_10gen
-  } else {
-    $package = $mongodb::params::package
-  }
+  #create directories needed by the db
 
-  package { 'mongodb-10gen':
-    name   => $package,
-    ensure => installed,
-  }
-
-  #create directory needed by the db
   # log path
-  file { $logpath :
+  file { "logdir-${servicename}" :
     ensure  => 'directory',
+    path    => $logpath,
     owner   => 'mongodb',
     group   => 'mongodb',
     mode    => '0644',
@@ -103,14 +78,17 @@ class mongodb (
   }  
 
   # db path
-  file { $dbpath :
+  file { "dbpath-${servicename}" :
     ensure  => 'directory',
+    path    =>  $dbpath,
     owner   => 'mongodb',
     group   => 'mongodb',
     mode    => '0644',
     require => Package['mongodb-10gen'],
   }  
 
+  # create the configfile used by the service
+  # each service should have its own config file
   file { $config_file :
     content => template('mongodb/mongod.conf.erb'),
     owner   => 'root',
@@ -120,8 +98,9 @@ class mongodb (
   }
 
   # the upstart config file
-  # contributions are welcome for RH/CentOs
+  # contributions are welcome for RH/CentOs or SUSE
   # as this is Ubuntu/Debian specific
+  # Each service needs its own file.
   file { "/etc/init/$servicename.conf" :
     content => template('mongodb/mongoinit.conf.erb'),
     owner   => 'root',
@@ -130,20 +109,12 @@ class mongodb (
     require => File[$config_file]
   }
 
-  # disable the original service as
-  # we want to configure different instances
-  # with different names
-  service { $orig_service :
-    name      => $orig_service,
-    ensure    => stopped,
-    enable    => false,
-  }
-
+  # the servicename should be unique
   service { $servicename :
     name      => $servicename,
     ensure    => running,
     enable    => true,
-    require   => [Service[$orig_service], File["/etc/init/$servicename.conf"]],
+    require   => [File["/etc/init/$servicename.conf"]],
     subscribe => File[$config_file],
   }
 }
