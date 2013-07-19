@@ -65,6 +65,9 @@ define mongodb (
   $slave           = undef,
   $only            = undef,
   $master          = undef,
+  $replset         = undef,
+  $oplogsize       = undef,
+  $smallfiles      = undef,
   $source          = undef,
   $config_file     = "/etc/$servicename-dbconfig.conf",
 ) {
@@ -122,4 +125,4 @@ define mongodb (
     require   => [File["/etc/init/$servicename.conf"]],
     subscribe => File[$config_file],
   }
-}
+} # Define mongodb
