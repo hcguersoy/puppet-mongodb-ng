@@ -9,6 +9,10 @@ fork = <%= mongofork %>
 port = <%= port %>
 dbpath= <%= dbpath %>
 
+<% if @bind_ip %>
+#bind ip - defaults in mongodb to all interfaces
+bind_ip = <%= bind_ip %> 
+<% end %>
 <% if @nojournal %>
 # Disables write-ahead journaling
 nojournal = <%= nojournal %> 
@@ -16,7 +20,6 @@ nojournal = <%= nojournal %>
 <% if @cpu %>
 # Enables periodic logging of CPU utilization and I/O wait
 cpu = <%= cpu %>
-
 <% end %>
 <% if @noauth %>
 # Turn on/off security.  Off is currently the default
@@ -93,7 +96,16 @@ source = <%= mongosource %>
 <% if @only %>
 # Slave only: specify a single database to replicate
 only = <%= only %>
-<% end %>
+<% end %> 
 <% if @master %>
 master = <%= master %>
 <% end %>
+<% if @replset %>
+# configure replica sets and oplog
+replSet = <%= @replset %><% end %>
+<% if @oplogsize %>oplogSize = <%= @oplogsize %><% end %>
+<% if @smallfiles %>smallfiles = <%= @smallfiles %><% end %>
+
+
+
+
