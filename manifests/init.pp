@@ -117,7 +117,9 @@ define mongodb (
     require => File[$config_file]
   }
 
-  # the servicename should be unique
+  # the servicename should be unique and 
+  # not 'mongodb' as this collides with the 
+  # original name
   service { $servicename :
     name      => $servicename,
     ensure    => running,
