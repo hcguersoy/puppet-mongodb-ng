@@ -29,6 +29,9 @@ Examples:
 
 
 ## Changes to the original
+
+### Installation using DPKG
+
 In this fork, installation on Ubuntu/Debian is supported by DPKG. For this, you have to provide a DEB file and tell the class there to find this:
 
     class {'mongodb::install':
@@ -50,10 +53,57 @@ Additionaly, you can now start multiple mongodb instances. The only requirement 
 
 Due to this changes RH/CentOS is at the moment not supprted.
 
+### Replication sets
+
+In this module, the setup of replica sets is supported.
+
+Example:
+
+    $replset1 = 'replset-1'
+
+    mongodb {'mongo-1-1' :
+        servicename     => 'mongo-1-1',
+        port            => 27117,
+        replset         => $replset1,
+        oplogsize       => 16,
+        smallfiles      => true,
+    }
+
+    mongodb {'mongo-1-2' :
+        servicename     => 'mongo-1-2',
+        port            => 27127,
+        replset         => $replset1,
+        oplogsize       => 16,
+        smallfiles      => true,    
+    }
+
+
+    mongodb::replset {"$replset1" :
+        replset        => $replset1,
+        replsetmembers => [['simplebox1', 27117], ['simplebox1', 27127]],
+        require        => [Service['mongo-1-1'], Service['mongo-1-2']]
+    } 
+
+Here, two nodes are configured and they have been told to be part of replica set 'replset-1'.
+Additional, just only because these mongo instances are only for testing in this case, we tell them
+to have a realy small oplogsize (16 Mb) and to use small files.
+
+With the class mongodb::replset we do the concrete replica configuration. The replica set members are 
+listed in an array. In this definition a sleep time is build in before the mongo shell is executed 
+because the startup of MongoDB can be time consuming due to creation of files. Before of this, the replica 
+set configuration doesn't complain that any members are not ready. 
+You can change the sleeptime via
+
+    waittime       => '45s'
+
+The sh sleep command is used for this, so you can use 'm', 's' etc. as time units.
+
+### Next steps
+
 The next steps are:
 
 * defines for mongos, arbiter, configserver
-* support for replica-sets and sharding
+* support for sharding
 * and many many other stuff    
 
 ## Supported Platforms
