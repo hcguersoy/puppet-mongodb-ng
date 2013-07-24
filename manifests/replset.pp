@@ -9,7 +9,7 @@
 define mongodb::replset(
     $replset        = undef,
     $replsetmembers = undef,
-    $waittime       = '10s',
+    $waittime       = '15s',
     $mongoexec      = '/usr/bin/mongo',
 ) {
 
