@@ -102,10 +102,10 @@ master = <%= master %>
 <% end %>
 <% if @replset %>
 # configure replica sets and oplog
-replSet = <%= @replset %><% end %>
+replSet = <%= @replset %>
 <% if @oplogsize %>oplogSize = <%= @oplogsize %><% end %>
 <% if @smallfiles %>smallfiles = <%= @smallfiles %><% end %>
-
+<% end %>
 
 
 
