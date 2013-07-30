@@ -16,7 +16,7 @@ rsconf = {
     @replsetmembers.each do |replsetmember| %>                
         {
         _id: <%=replid%>,
-        host: "<%=replsetmember[0]%>:<%=replsetmember[1]%>"
+        host: "<%=replsetmember['host']%>:<%=replsetmember['port']%>"
         },
 <%      replid += 1
     end %>         

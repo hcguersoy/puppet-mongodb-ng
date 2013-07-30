@@ -15,8 +15,11 @@ define mongodb::replset(
 
     # pick the host and port of the first member in the list
     # this node is used to configure the replica set
-    $firstmemberhost = $replsetmembers[0][0]
-    $firstmemberport = $replsetmembers[0][1]
+    $firstmemberhost = $replsetmembers[0][host]
+    $firstmemberport = $replsetmembers[0][port]
+
+    notice($firstmemberhost)
+    notice($firstmemberport)
 
     file { "/tmp/$replset-initconf.js" :
         content => template('mongodb/replset-init.js.erb'),
