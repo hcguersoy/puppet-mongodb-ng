@@ -77,15 +77,19 @@ Example:
         smallfiles      => true,    
     }
 
+    $replsetmembers = [
+        {'host' => 'simplebox1', 'port' => '27117'},
+        {'host' => 'simplebox1', 'port' => '27127'},
+    ]
 
     mongodb::replset {"$replset1" :
         replset        => $replset1,
-        replsetmembers => [['simplebox1', 27117], ['simplebox1', 27127]],
+        replsetmembers => $replsetmembers,
         require        => [Service['mongo-1-1'], Service['mongo-1-2']]
     } 
 
 Here, two nodes are configured and they have been told to be part of replica set 'replset-1'.
-Additional, just only because these mongo instances are only for testing in this case, we tell them
+Additional, just because these mongo instances are only for testing in this case, we tell them
 to have a realy small oplogsize (16 Mb) and to use small files.
 
 With the class mongodb::replset we do the concrete replica configuration. The replica set members are 
@@ -105,6 +109,11 @@ The next steps are:
 * defines for mongos, arbiter, configserver
 * support for sharding
 * and many many other stuff    
+
+### Limitations
+
+Due to the fact that the variables in defines are not accessible I use an array of hashes to pass the parameters of the members.
+If you have any elegant idea how we can use here defines - let it me know. 
 
 ## Supported Platforms
 
