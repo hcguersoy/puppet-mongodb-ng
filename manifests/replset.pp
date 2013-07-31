@@ -1,8 +1,16 @@
 # Define to initialise a replica set.
 # 
 # $replset:         the name of the replica set
-# $replsetmembers:  an array of array, containing the replica set member and their ports
-#                   like: replsetmembers => [['localhost', 27117], ['localhost', 27127]],
+# $replsetmembers:  an array of hashes, containing the replica set member and their ports
+#                   and some configuration details.
+#                   The first member in the array will be picked as the master.
+#                   like: 
+#                   $replsetmembers = [
+#                        {'host' => 'simplebox1', 'port' => '27017'},
+#                        {'host' => 'simplebox2', 'port' => '27017'},
+#                    ]
+#                   Allowed keys are ate current:
+#                   host, port, arbiteronly, indexes (sets buildIndexes), hidden and priority.
 # $waittime:        how long puppet should waild before firing up the rs initialisation
 # $mongoexec:       the mongo executable, defaults to /usr/bin/mongo
 

@@ -4,8 +4,9 @@
 // script has been applied on a replset.
 
 // do an initial 'initiate'
-// if the RS already exists this does not anything,
-// if not, it configures the RS with a default setup
+// if the RS already exists this does reconfigures the rs.
+// This causes the lost of all manuel configurations done.
+// If not, it configures the RS with the default setup
 rs.initiate();
 
 //now configure the (maybe new) RS
@@ -16,7 +17,11 @@ rsconf = {
     @replsetmembers.each do |replsetmember| %>                
         {
         _id: <%=replid%>,
-        host: "<%=replsetmember['host']%>:<%=replsetmember['port']%>"
+        host: "<%=replsetmember['host']%>:<%=replsetmember['port']%>",
+        <% if replsetmember.has_key?('arbiteronly') %>arbiterOnly: true,<% end %>
+        <% if replsetmember.has_key?('indexes') %>buildIndexes: true,<% end %>
+        <% if replsetmember.has_key?('hidden') %>hidden: true,<% end %>
+        <% if replsetmember.has_key?('priority') %>priority: <%= replsetmember['priority'] %>,<% end %>
         },
 <%      replid += 1
     end %>         
