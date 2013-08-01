@@ -69,6 +69,7 @@ define mongodb (
   $oplogsize       = undef,
   $smallfiles      = undef,
   $source          = undef,
+  $configsvr       = undef,
   $config_file     = "/etc/$servicename-dbconfig.conf",
 ) {
 
