@@ -102,11 +102,23 @@ You can change the sleeptime via
 
 The sh sleep command is used for this, so you can use 'm', 's' etc. as time units.
 
+### Sharding
+
+At the moment this module only supports the setup and start of a configuration server.
+
+Example:
+
+    mongodb {'mongo-cfg-1' :
+        servicename     => 'mongo-cfg-1',
+        port            => 27019,
+        configsvr       => true,
+    }
+
 ### Next steps
 
 The next steps are:
 
-* defines for mongos, arbiter, configserver
+* define for mongos
 * support for sharding
 * and many many other stuff    
 
