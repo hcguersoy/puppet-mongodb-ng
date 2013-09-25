@@ -104,23 +104,19 @@ The sh sleep command is used for this, so you can use 'm', 's' etc. as time unit
 
 ### Sharding
 
-At the moment this module only supports the setup and start of a configuration server.
+This module supports now the configuration of a sharded system. 
 
 Example:
 
-    mongodb {'mongo-cfg-1' :
-        servicename     => 'mongo-cfg-1',
-        port            => 27019,
-        configsvr       => true,
-    }
 
 ### Next steps
 
 The next steps are:
 
-* define for mongos
-* support for sharding
-* and many many other stuff    
+* removing old, unused code
+* removing initial installed configuration files
+* better support for replication and sharding
+* support for Red Hat / CentOS
 
 ### Limitations
 

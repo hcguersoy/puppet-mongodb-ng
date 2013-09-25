@@ -1,0 +1,7 @@
+// JavaScript file to set up MongoDB sharding
+// the shard can be individual nodes but should 
+// be replica sets in a production environment
+
+<% @shardmembers.each do |shardmember| %>
+    sh.addShard("<%=shardmember['host']%>:<%=shardmember['port']%>");
+<% end %>    
