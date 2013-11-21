@@ -106,8 +106,48 @@ The sh sleep command is used for this, so you can use 'm', 's' etc. as time unit
 
 This module supports now the configuration of a sharded system. 
 
-Example:
+A simple example with a shard consisting of
 
+- one config server (you should NOT use only one config server in production! NEVER!)
+- one mongos process
+- two shard members
+
+    $shardmembers = [
+        {host => 'shardbox1', port => 27017},
+        {host => 'shardbox1', port => 27117},
+    ]
+
+
+    mongodb {'mongo-cfg-1' :
+        servicename     => 'mongo-cfg-1',
+        port            => 27019,
+        configsvr       => true,
+    }
+
+    mongodb::mongos {'mongo-s-1' :
+        servicename     => 'mongo-s-1',
+        port            => 27517,
+        configdb        => 'shardbox1:27019',
+        require         => Service['mongo-cfg-1']
+    } 
+
+    mongodb {'mongo-1-0' :
+        servicename     => 'mongo-1-0',
+        port            => $shardmembers[0][port],
+        smallfiles      => true,
+    }
+
+    mongodb {'mongo-1-1' :
+        servicename     => 'mongo-1-1',
+        port            => $shardmembers[1][port],
+        smallfiles      => true,    
+    }
+
+    mongodb::shard {'shard1' :
+        shardmembers    => $shardmembers,
+        mongos          => {host => 'shardbox1', port => 27517},
+        require         => [Service['mongo-s-1'], Service['mongo-1-0'], Service['mongo-1-1']]
+    }
 
 ### Next steps
 
@@ -118,10 +158,14 @@ The next steps are:
 * better support for replication and sharding
 * support for Red Hat / CentOS
 
-### Limitations
+## Limitations
 
 Due to the fact that the variables in defines are not accessible I use an array of hashes to pass the parameters of the members.
 If you have any elegant idea how we can use here defines - let it me know. 
+
+## More examples
+
+More examples could be found (in the future) at https://github.com/hcguersoy/puppet-mongodb-ng-example
 
 ## Supported Platforms
 
