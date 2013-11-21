@@ -12,13 +12,13 @@ setuid mongodb
 setgid mongodb
 
 pre-start script
-    mkdir -p <%= logpath %>
+    mkdir -p <%= @logpath %>
 end script
 
 start on runlevel [2345]
 stop on runlevel [06]
 
 script
-  exec /usr/bin/mongos --config <%= config_file %>
+  exec /usr/bin/mongos --config <%= @config_file %>
 end script
 
