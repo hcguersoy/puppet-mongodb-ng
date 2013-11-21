@@ -112,6 +112,8 @@ A simple example with a shard consisting of
 - one mongos process
 - two shard members
 
+And you should realy never run this stuff in production in the same machine!
+
     $shardmembers = [
         {host => 'shardbox1', port => 27017},
         {host => 'shardbox1', port => 27117},
