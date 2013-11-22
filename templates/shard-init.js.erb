@@ -3,5 +3,5 @@
 // be replica sets in a production environment
 
 <% @shardmembers.each do |shardmember| %>
-    sh.addShard("<%=shardmember['host']%>:<%=shardmember['port']%>");
+    sh.addShard("<% if shardmember.has_key?('replset')%><%=shardmember['replset']%>/<% end %><%=shardmember['host']%>:<%=shardmember['port']%>");
 <% end %>    
