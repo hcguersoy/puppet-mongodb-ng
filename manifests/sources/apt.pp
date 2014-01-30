@@ -4,7 +4,7 @@ class mongodb::sources::apt inherits mongodb::params {
   if $mongodb::location {
     $location = $mongodb::location
   } else {
-    $location = $mongodb::params::locations[$mongodb::init]
+    $location = $mongodb::params::locations[$mongodb::params::init]
   }
 
   apt::source { '10gen':
