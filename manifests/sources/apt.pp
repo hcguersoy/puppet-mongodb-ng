@@ -1,8 +1,8 @@
 class mongodb::sources::apt inherits mongodb::params {
   include apt
 
-  if $mongodb::location {
-    $location = $mongodb::location
+  if $mongodb::install::location {
+    $location = $mongodb::install::location
   } else {
     $location = $mongodb::params::locations[$mongodb::params::init]
   }

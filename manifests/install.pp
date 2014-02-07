@@ -5,7 +5,7 @@
 # TODO delete original upstart and config file
 
 class mongodb::install (
-    $location        = '',
+    $location        = undef,
     $init            = $mongodb::params::init,
     $enable_10gen    = false,
     $enable_dpkg     = false,
